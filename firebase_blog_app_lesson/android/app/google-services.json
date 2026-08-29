@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "158882196078",
+    "project_id": "fir-bloglessonrubylearner",
+    "storage_bucket": "fir-bloglessonrubylearner.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:158882196078:android:231be413801fa15a40d47f",
+        "android_client_info": {
+          "package_name": "com.tpm.firebase_blog_app_lesson"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPm6Hf9BV3LDyHTj_xKvFenGUwszV1ydo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
