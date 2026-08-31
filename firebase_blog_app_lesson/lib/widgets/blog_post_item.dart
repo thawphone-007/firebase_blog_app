@@ -1,8 +1,8 @@
-import 'package:firebase_blog_app_lesson/data/blog_database.dart';
 import 'package:flutter/material.dart';
 
+import '../data/blog_database.dart';
 import '../data/blog_post_model.dart';
-import 'edit_blog_post_dialog.dart';
+import 'update_blog_post_dialog.dart';
 
 class BlogPostItem extends StatefulWidget {
   const new({super.key, required this.blogData, required this.docId});
@@ -15,8 +15,8 @@ class BlogPostItem extends StatefulWidget {
 }
 
 class _BlogPostItemState extends State<BlogPostItem> {
-  final MenuController _menuController = MenuController();
   final BlogDatabase _blogDatabase = BlogDatabase();
+  final MenuController _menuController = MenuController();
 
   @override
   Widget build(BuildContext context) {
@@ -24,6 +24,7 @@ class _BlogPostItemState extends State<BlogPostItem> {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Card(
         elevation: 0,
+        color: Colors.lightBlueAccent,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
@@ -35,7 +36,7 @@ class _BlogPostItemState extends State<BlogPostItem> {
                   SizedBox(width: 8),
                   Text(
                     "Maung Maung",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   Spacer(),
                   MenuAnchor(
@@ -44,25 +45,19 @@ class _BlogPostItemState extends State<BlogPostItem> {
                       MenuItemButton(
                         onPressed: () {
                           _menuController.close();
-                          _updateBlogPost(
+                          _updateBlogPostDialog(
                             blogPostModel: widget.blogData,
                             docId: widget.docId,
                           );
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text("Edit"),
-                        ),
+                        child: Text("Edit"),
                       ),
                       MenuItemButton(
                         onPressed: () {
                           _menuController.close();
                           _deleteBlogPost(widget.docId);
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.all(12.0),
-                          child: Text("Delete"),
-                        ),
+                        child: Text("Delete"),
                       ),
                     ],
                     builder: (_, _, _) {
@@ -76,33 +71,21 @@ class _BlogPostItemState extends State<BlogPostItem> {
                   ),
                 ],
               ),
+              Divider(),
               Center(
                 child: Text(
                   widget.blogData.title ?? "",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
               ),
               SizedBox(height: 4),
               Text(widget.blogData.description ?? ""),
-              SizedBox(height: 4),
-              if(widget.blogData.image != null)
-              Image.memory(widget.blogData.image!.bytes)
+              if (widget.blogData.image != null)
+                Image.memory(widget.blogData.image!.bytes),
             ],
           ),
         ),
       ),
-    );
-  }
-
-  void _updateBlogPost({
-    required BlogPostModel blogPostModel,
-    required String docId,
-  }) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return EditBlogPostDialog(blogPostModel: blogPostModel, docId: docId);
-      },
     );
   }
 
@@ -126,12 +109,24 @@ class _BlogPostItemState extends State<BlogPostItem> {
           SnackBar(
             backgroundColor: Colors.red,
             content: Text(
-              "Delete Blog Post Failed $e",
+              "Delete Blog Post Failed!",
               style: TextStyle(color: Colors.white),
             ),
           ),
         );
       }
     }
+  }
+
+  void _updateBlogPostDialog({
+    required BlogPostModel blogPostModel,
+    required String docId,
+  }) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return UpdateBlogPostDialog(blogPostModel: blogPostModel, docId: docId);
+      },
+    );
   }
 }

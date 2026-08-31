@@ -1,17 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_blog_app_lesson/data/blog_post_model.dart';
+
+import 'blog_post_model.dart';
 
 class BlogDatabase {
-  // ***** Create Database "blogs" Collection on FirebaseFirestore And Add Documents
+  // ***** CREATE BLOGS POST ON FIREBASE FIRESTORE
   final CollectionReference<BlogPostModel> _blogCollection = FirebaseFirestore
       .instance
       .collection("blogs")
       .withConverter(
-        fromFirestore: (snapshot, options) => BlogPostModel.fromJson(snapshot),
+        fromFirestore: (snapshot, _) => BlogPostModel.fromJson(snapshot),
         toFirestore: (blogPostModel, _) => blogPostModel.toJson(),
       );
 
-  Future<DocumentReference> createBlogPost(BlogPostModel blogPostModel) async {
+  Future<DocumentReference<BlogPostModel>> createBlogPost({
+    required BlogPostModel blogPostModel,
+  }) async {
     try {
       DateTime now = DateTime.now();
       return await _blogCollection.add(
@@ -22,11 +25,11 @@ class BlogDatabase {
     }
   }
 
-  // ***** Read Collection Database From FirebaseFirestore
+  // ***** READ BLOG POST FORM FIREBASE FIRESTORE
   late final Stream<QuerySnapshot<BlogPostModel>> _blogPostStream =
       _blogCollection.snapshots();
 
-  Stream<QuerySnapshot<BlogPostModel>> readBlogList() {
+  Stream<QuerySnapshot<BlogPostModel>> readBlogPost() {
     try {
       return _blogPostStream;
     } catch (e) {
@@ -34,7 +37,7 @@ class BlogDatabase {
     }
   }
 
-  // ***** Delete Document with DocumentId From FirebaseFirestore's Collection
+  // ***** DELETE BLOG DOCUMENT FORM FIREBASE FIRESTORE
   Future<void> deleteBlogPost(String docId) async {
     try {
       return await _blogCollection.doc(docId).delete();
@@ -43,7 +46,7 @@ class BlogDatabase {
     }
   }
 
-  // ***** Update Document with DocumentId From FirebaseFirestore's Collection
+  // ***** UPDATE BLOG POST ON FIREBASE FIRESTORE
   Future<void> updateBlogPost({
     required BlogPostModel blogPostModel,
     required String docId,
@@ -58,7 +61,7 @@ class BlogDatabase {
                 .toJson(),
           );
     } catch (e) {
-      return Future.error(e);
+      Future.error(e);
     }
   }
 }
