@@ -54,8 +54,6 @@ class _CreateBlogPostDialogState extends State<CreateBlogPostDialog> {
               border: OutlineInputBorder(),
             ),
           ),
-          if (_isLoading == true) SizedBox(height: 8),
-          if (_isLoading == true) CircularProgressIndicator(),
           SizedBox(height: 4),
           if (_image == null)
             IconButton(
@@ -70,6 +68,8 @@ class _CreateBlogPostDialogState extends State<CreateBlogPostDialog> {
             ),
           if (_image != null)
             Image.memory(_image!, width: 200, height: 150, fit: BoxFit.cover),
+          if (_isLoading == true) SizedBox(height: 8),
+          if (_isLoading == true) CircularProgressIndicator(),
         ],
       ),
 
@@ -84,56 +84,58 @@ class _CreateBlogPostDialogState extends State<CreateBlogPostDialog> {
               child: Text("Cancel"),
             ),
             FilledButton(
-              onPressed: () async {
-                if (_titleController.text.trim().isEmpty ||
-                    _descriptionController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.orange,
-                      content: Text("Please Fill Title and Description"),
-                    ),
-                  );
-                } else {
-                  _isLoading = true;
-                  try {
-                    await _blogDatabase.createBlogPost(
-                      blogPostModel: BlogPostModel(
-                        title: _titleController.text,
-                        description: _descriptionController.text,
-                        image: _image != null ? Blob(_image!) : null,
-                      ),
-                    );
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.green,
-                          content: Text(
-                            "Create Blog Post Sucessfully",
-                            style: TextStyle(color: Colors.white),
+              onPressed: _isLoading == true
+                  ? null
+                  : () async {
+                      if (_titleController.text.trim().isEmpty ||
+                          _descriptionController.text.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.orange,
+                            content: Text("Please Fill Title and Description"),
                           ),
-                        ),
-                      );
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.red,
-                          content: Text(
-                            "Create Blog Post Failed!",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      );
-                    }
-                  } finally {
-                    _isLoading = false;
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  }
-                }
-              },
+                        );
+                      } else {
+                        _isLoading = true;
+                        try {
+                          await _blogDatabase.createBlogPost(
+                            blogPostModel: BlogPostModel(
+                              title: _titleController.text,
+                              description: _descriptionController.text,
+                              image: _image != null ? Blob(_image!) : null,
+                            ),
+                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.green,
+                                content: Text(
+                                  "Create Blog Post Sucessfully",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  "Create Blog Post Failed!",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          }
+                        } finally {
+                          _isLoading = false;
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        }
+                      }
+                    },
               child: Text("Create Blog Post"),
             ),
           ],

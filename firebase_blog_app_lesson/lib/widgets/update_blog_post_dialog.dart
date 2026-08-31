@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../data/blog_database.dart';
 import '../data/blog_post_model.dart';
@@ -22,12 +25,14 @@ class _UpdateBlogPostDialogState extends State<UpdateBlogPostDialog> {
   final TextEditingController _descriptionController = TextEditingController();
   final BlogDatabase _blogDatabase = BlogDatabase();
   bool _isLoading = false;
+  Uint8List? _image;
 
   @override
   void initState() {
     super.initState();
     _titleController.text = widget.blogPostModel.title ?? "";
     _descriptionController.text = widget.blogPostModel.description ?? "";
+    _image = widget.blogPostModel.image?.bytes;
   }
 
   @override
@@ -64,6 +69,33 @@ class _UpdateBlogPostDialogState extends State<UpdateBlogPostDialog> {
               border: OutlineInputBorder(),
             ),
           ),
+          if (_image == null)
+            IconButton(
+              onPressed: () async {
+                XFile? image = await _pickImage();
+                if (image != null) {
+                  _image = await image.readAsBytes();
+                  setState(() {});
+                }
+              },
+              icon: Icon(Icons.image, size: 40, color: Colors.lightBlueAccent),
+            ),
+
+          if (_image != null) SizedBox(height: 4),
+          if (_image != null)
+            Image.memory(_image!, width: 200, height: 150, fit: BoxFit.cover),
+          if (_image != null)
+            TextButton(
+              onPressed: () async {
+                XFile? image = await _pickImage();
+                if (image != null) {
+                  _image = await image.readAsBytes();
+                  setState(() {});
+                }
+              },
+              child: Text("Edit Image"),
+            ),
+
           if (_isLoading == true) SizedBox(height: 8),
           if (_isLoading == true) CircularProgressIndicator(),
         ],
@@ -79,61 +111,69 @@ class _UpdateBlogPostDialogState extends State<UpdateBlogPostDialog> {
               child: Text("Cancel"),
             ),
             FilledButton(
-              onPressed: () async {
-                if (_titleController.text.trim().isEmpty ||
-                    _descriptionController.text.trim().isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      backgroundColor: Colors.orange,
-                      content: Text("Please Fill Title and Description"),
-                    ),
-                  );
-                } else {
-                  _isLoading = true;
-                  try {
-                    await _blogDatabase.updateBlogPost(
-                      blogPostModel: BlogPostModel(
-                        title: _titleController.text,
-                        description: _descriptionController.text,
-                      ),
-                      docId: widget.docId,
-                    );
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.green,
-                          content: Text(
-                            "Update Blog Post Sucessfully",
-                            style: TextStyle(color: Colors.white),
+              onPressed: _isLoading == true
+                  ? null
+                  : () async {
+                      if (_titleController.text.trim().isEmpty ||
+                          _descriptionController.text.trim().isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: Colors.orange,
+                            content: Text("Please Fill Title and Description"),
                           ),
-                        ),
-                      );
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: Colors.red,
-                          content: Text(
-                            "Update Blog Post Failed!",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      );
-                    }
-                  } finally {
-                    _isLoading = false;
-                    if (context.mounted) {
-                      Navigator.pop(context);
-                    }
-                  }
-                }
-              },
+                        );
+                      } else {
+                        _isLoading = true;
+                        try {
+                          await _blogDatabase.updateBlogPost(
+                            blogPostModel: BlogPostModel(
+                              title: _titleController.text,
+                              description: _descriptionController.text,
+                              image: _image != null ? Blob(_image!) : null,
+                            ),
+                            docId: widget.docId,
+                          );
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.green,
+                                content: Text(
+                                  "Update Blog Post Sucessfully",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.red,
+                                content: Text(
+                                  "Update Blog Post Failed!",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            );
+                          }
+                        } finally {
+                          _isLoading = false;
+                          if (context.mounted) {
+                            Navigator.pop(context);
+                          }
+                        }
+                      }
+                    },
               child: Text("Update Blog Post"),
             ),
           ],
         ),
       ],
     );
+  }
+
+  Future<XFile?> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    return await picker.pickImage(source: ImageSource.gallery);
   }
 }
