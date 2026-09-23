@@ -12,7 +12,20 @@
           "package_name": "com.tpm.firebase_blog_app_lesson"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "158882196078-aub31m9ajfp0iftj8gt54ao9q447ll8g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.tpm.firebase_blog_app_lesson",
+            "certificate_hash": "c6d2b7fe50ce759de4b93632c8e3c55ff0c2f47e"
+          }
+        },
+        {
+          "client_id": "158882196078-sej1ckq06pkehe06htd1d049ef7mehs6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCPm6Hf9BV3LDyHTj_xKvFenGUwszV1ydo"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "158882196078-sej1ckq06pkehe06htd1d049ef7mehs6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "158882196078-e8is9pfuc3mo6gljvqtr1q5b5l3n7cnp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.tpm.firebaseBlogAppLesson"
+              }
+            }
+          ]
         }
       }
     }

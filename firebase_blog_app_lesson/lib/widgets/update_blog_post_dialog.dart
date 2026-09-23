@@ -126,7 +126,7 @@ class _UpdateBlogPostDialogState extends State<UpdateBlogPostDialog> {
                         _isLoading = true;
                         try {
                           await _blogDatabase.updateBlogPost(
-                            blogPostModel: BlogPostModel(
+                            blogPostModel: BlogPostModel().copyWith(
                               title: _titleController.text,
                               description: _descriptionController.text,
                               image: _image != null ? Blob(_image!) : null,

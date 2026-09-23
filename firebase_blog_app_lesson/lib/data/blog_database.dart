@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'blog_post_model.dart';
 
@@ -16,9 +17,17 @@ class BlogDatabase {
     required BlogPostModel blogPostModel,
   }) async {
     try {
-      DateTime now = DateTime.now();
+      final DateTime now = DateTime.now();
+      final User? user = FirebaseAuth.instance.currentUser;
+      final String? userId = user?.uid;
+      if (userId == null) {
+        return await Future.error("User is not Registered");
+      }
       return await _blogCollection.add(
-        blogPostModel.copyWith(createdAt: now.millisecondsSinceEpoch),
+        blogPostModel.copyWith(
+          createdAt: now.millisecondsSinceEpoch,
+          userId: userId,
+        ),
       );
     } catch (e) {
       return Future.error(e);
@@ -52,7 +61,7 @@ class BlogDatabase {
     required String docId,
   }) async {
     try {
-      DateTime now = DateTime.now();
+      final DateTime now = DateTime.now();
       return await _blogCollection
           .doc(docId)
           .update(

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_blog_app_lesson/data/google_sing_in.dart';
 import 'package:flutter/material.dart';
 
 import '../data/blog_database.dart';
@@ -19,7 +21,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: Text("Firebase Blog App")),
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text("Firebase Blog App"),
+        actions: [
+          IconButton(
+            onPressed: () {
+              FirebaseAuth.instance.signOut();
+            },
+            icon: Icon(Icons.exit_to_app_outlined),
+          ),
+        ],
+      ),
 
       body: StreamBuilder<QuerySnapshot<BlogPostModel>>(
         stream: _blogDatabase.readBlogPost(),
